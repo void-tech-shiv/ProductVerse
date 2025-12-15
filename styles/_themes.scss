@@ -1,0 +1,39 @@
+// Theme styles using CSS custom properties
+
+:root {
+  // Light theme (default)
+  --background-color: #{$background-light};
+  --text-color: #{$text-color};
+  --text-secondary: #{darken($text-color, 20%)};
+  --header-bg: #{$primary-color};
+  --header-text: #{$text-light};
+  --heading-color: #{$primary-color};
+  --card-bg: #{$text-light};
+  --shadow-color: #{$shadow-color};
+  --border-color: #{$border-color};
+  --price-color: #{$accent-color};
+  --product-name-color: #{$text-color};
+  --image-placeholder-bg: #{lighten($background-light, 5%)};
+  --image-placeholder-text: #{darken($background-light, 20%)};
+}
+
+[data-theme="dark"] {
+  --background-color: #{$background-dark};
+  --text-color: #{$text-light};
+  --text-secondary: #{lighten($background-dark, 50%)};
+  --header-bg: #{darken($background-dark, 10%)};
+  --header-text: #{$text-light};
+  --heading-color: #{$secondary-color};
+  --card-bg: #{darken($background-dark, 5%)};
+  --shadow-color: #{rgba(0, 0, 0, 0.3)};
+  --border-color: #{darken($background-dark, 15%)};
+  --price-color: #{$secondary-color};
+  --product-name-color: #{$text-light};
+  --image-placeholder-bg: #{darken($background-dark, 15%)};
+  --image-placeholder-text: #{lighten($background-dark, 30%)};
+}
+
+// Theme transition for smooth switching
+body {
+  transition: background-color $transition-medium, color $transition-medium;
+}

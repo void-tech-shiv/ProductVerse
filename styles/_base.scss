@@ -1,0 +1,53 @@
+// Base styles
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: $font-primary;
+  color: var(--text-color);
+  background-color: var(--background-color);
+  line-height: 1.6;
+  transition: background-color $transition-medium, color $transition-medium;
+}
+
+header {
+  background: var(--header-bg);
+  color: var(--header-text);
+  padding: $spacing-md $spacing-lg;
+  box-shadow: 0 2px 4px var(--shadow-color);
+
+  h1 {
+    font-size: $font-size-xxl;
+    margin-bottom: $spacing-sm;
+  }
+}
+
+main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: $spacing-md;
+
+  .product-showcase {
+    h2 {
+      font-size: $font-size-xl;
+      margin-bottom: $spacing-md;
+      color: var(--heading-color);
+    }
+  }
+}
+
+.theme-controls {
+  @include flex-center(row, flex-start, center);
+  gap: $spacing-sm;
+
+  button {
+    @include button-style($primary-color);
+  }
+}
+
+button {
+  @include button-style($accent-color);
+}
