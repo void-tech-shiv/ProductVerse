@@ -1,30 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Showcase</title>
-    <link rel="stylesheet" href="styles/main.css">
-</head>
-<body>
-    <header>
-        <h1>Our Amazing Product Collection</h1>
-        <div class="theme-controls">
-            <button id="lightTheme">Light Theme</button>
-            <button id="darkTheme">Dark Theme</button>
-        </div>
-    </header>
-    
-    <main>
-        <section class="product-showcase">
-            <h2>Featured Products</h2>
-            <div id="productContainer" class="product-grid">
-                <!-- Products will be dynamically inserted here -->
-            </div>
-        </section>
-    </main>
-
-    <script src="scripts/products.js"></script>
-    <script src="scripts/main.js"></script>
-</body>
-</html>
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="ProductVerse, a JavaScript OOP and SCSS catalogue experiment."><title>ProductVerse | OOP Product Showcase</title><link rel="stylesheet" href="styles/main.css"><script src="scripts/products.js" defer></script><script src="scripts/main.js" defer></script></head>
+<body><a class="skip" href="#main">Skip to catalogue</a><header><div class="shell top"><a class="brand" href="#main">PRODUCT<span>VERSE.</span></a><div class="top-controls"><label for="theme">Appearance<select id="theme" disabled><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select></label><a href="#cart">Cart (<span id="count">0</span>)</a></div></div></header>
+<main id="main" class="shell"><section class="hero"><p class="eyebrow">WEB EXPERIMENT 08 / OBJECT-ORIENTED JAVASCRIPT</p><h1>One catalogue.<br><span>Many product types.</span></h1><p>Explore an interactive demo powered by inheritance, polymorphism and reusable SCSS components. All prices and product details are sample data.</p><a class="button" href="#catalogue">Explore products</a></section>
+<section id="catalogue"><h2>Product collection</h2><div class="filters" id="filters" hidden><label for="search">Search<input id="search" type="search" placeholder="Name, brand or detail"></label><label for="category">Category<select id="category"><option>All</option><option>Electronics</option><option>Clothing</option><option>Books</option></select></label><label for="sort">Sort by<select id="sort"><option value="featured">Featured</option><option value="low">Price: low to high</option><option value="high">Price: high to low</option></select></label><button id="reset" type="button" class="secondary">Reset</button></div><p id="results" role="status"></p><div id="productContainer" class="grid"></div><noscript>Enable JavaScript to display products.</noscript></section>
+<section id="cart"><h2>Demo cart</h2><div class="cart-layout"><div id="items" class="panel"><p>Your cart is empty.</p></div><aside class="panel"><h3>Order estimate</h3><p>Subtotal <strong id="total">$0.00</strong></p><button id="checkout" disabled type="button">Preview checkout</button><p class="small">No payment or real order is processed.</p></aside></div><p id="notice" role="status"></p></section></main><footer class="shell top"><p>ProductVerse · Academic storefront prototype</p><a href="https://github.com/void-tech-shiv/Exprement-8">View source</a></footer></body></html>

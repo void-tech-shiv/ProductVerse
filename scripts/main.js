@@ -1,172 +1,21 @@
-// Main JavaScript file to initialize and display products
-
-// Wait for DOM to load
-document.addEventListener('DOMContentLoaded', function() {
-    // Create sample products using our classes
-    const products = [
-        new Electronics(1, 'Smartphone X', 699.99, 'Latest smartphone with amazing features', 'TechBrand', 2),
-        new Electronics(2, 'Wireless Headphones', 199.99, 'Noise-cancelling wireless headphones', 'SoundMax', 1),
-        new Clothing(3, 'Casual T-Shirt', 29.99, 'Comfortable cotton t-shirt', 'M', 'Blue', 'Cotton'),
-        new Clothing(4, 'Designer Jeans', 79.99, 'Stylish slim fit jeans', '32', 'Dark Blue', 'Denim'),
-        new Book(5, 'JavaScript Guide', 39.99, 'Complete guide to modern JavaScript', 'John Developer', 'Programming', 450),
-        new Book(6, 'CSS Mastery', 45.99, 'Advanced CSS techniques and tips', 'Style Master', 'Web Design', 380)
-    ];
-
-    // Get the product container
-    const productContainer = document.getElementById('productContainer');
-
-    // Display products
-    products.forEach(product => {
-        const productElement = createProductCard(product);
-        productContainer.appendChild(productElement);
-    });
-
-    // Set up theme switching
-    setupThemeSwitching();
+"use strict";
+document.addEventListener("DOMContentLoaded",()=>{
+ const store=createCatalogue(sampleProducts()),get=id=>document.getElementById(id),key="productverse-cart-v1",themeKey="productverse-theme-v1",money=c=>new Intl.NumberFormat("en-US",{style:"currency",currency:"USD"}).format(c/100);
+ let cart=[];try{cart=store.normalize(JSON.parse(localStorage.getItem(key)||"[]"));}catch{}
+ const n=(tag,text,cls)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;};
+ const btn=(text,fn,cls)=>{const b=n("button",text,cls);b.type="button";b.addEventListener("click",fn);return b;};
+ const notify=text=>{get("notice").textContent=text;};
+ function save(){try{localStorage.setItem(key,JSON.stringify(cart));}catch{notify("Cart storage unavailable; changes are temporary.");}renderCart();}
+ function renderProducts(){const list=get("productContainer"),rows=store.filter(get("search").value,get("category").value,get("sort").value);list.replaceChildren();get("results").textContent=rows.length+" products";if(!rows.length)list.append(n("p","No products match these filters."));
+ for(const p of rows){const card=n("article",undefined,"product-card"),art=n("div",({Electronics:"EL",Clothing:"CL",Books:"BK"})[p.category],"product-art"),info=n("div",undefined,"product-info");art.dataset.category=p.category;art.setAttribute("aria-hidden","true");
+ const details=n("details"),dl=n("dl");details.append(n("summary","View specifications"));for(const [k,v] of p.getDetails()){const row=n("div");row.append(n("dt",k),n("dd",v));dl.append(row);}details.append(dl);
+ info.append(n("p",p.category,"category"),n("h3",p.name),n("p",p.description,"description"),n("strong",money(p.price),"price"),details,btn("Add to cart",()=>{cart=store.change(cart,p.id,1);save();notify(p.name+" added.");}));card.append(art,info);list.append(card);}}
+ function renderCart(){const list=get("items"),s=store.totals(cart);list.replaceChildren();get("count").textContent=s.count;get("total").textContent=money(s.total);get("checkout").disabled=!s.count;if(!cart.length)list.append(n("p","Your cart is empty."));
+ for(const r of cart){const p=store.find(r.id),row=n("article",undefined,"cart-row"),controls=n("div",undefined,"quantity");row.append(n("h3",p.name),n("p",money(p.price*r.qty)));for(const [text,delta] of [["−",-1],["+",1]]){const b=btn(text,()=>{cart=store.change(cart,p.id,delta);save();},"secondary");b.setAttribute("aria-label",(delta<0?"Decrease ":"Increase ")+p.name+" quantity");controls.append(b);if(delta<0)controls.append(n("span",String(r.qty)));}controls.append(btn("Remove",()=>{cart=cart.filter(x=>x.id!==p.id);save();},"secondary"));row.append(controls);list.append(row);}}
+ for(const id of ["search","category","sort"])get(id).addEventListener(id==="search"?"input":"change",renderProducts);
+ get("reset").addEventListener("click",()=>{get("search").value="";get("category").value="All";get("sort").value="featured";renderProducts();get("search").focus();});
+ get("checkout").addEventListener("click",()=>{if(store.totals(cart).count)notify("Demo checkout preview complete. No order or payment was processed.");});
+ const theme=get("theme");let pref="system";try{const v=localStorage.getItem(themeKey);if(["light","dark","system"].includes(v))pref=v;}catch{}
+ function apply(){if(pref==="system")delete document.documentElement.dataset.theme;else document.documentElement.dataset.theme=pref;theme.value=pref;}
+ theme.addEventListener("change",()=>{pref=theme.value;try{localStorage.setItem(themeKey,pref);}catch{}apply();});theme.disabled=false;apply();get("filters").hidden=false;renderProducts();renderCart();
 });
-
-// Function to create product card HTML
-function createProductCard(product) {
-    const productDiv = document.createElement('div');
-    productDiv.className = 'product-card';
-
-    // Product image placeholder
-    const imageDiv = document.createElement('div');
-    imageDiv.className = 'product-image';
-    
-    // Create an svg element for the image
-    const svgEl = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svgEl.setAttribute("viewBox", "0 0 300 200");
-    svgEl.setAttribute("preserveAspectRatio", "xMidYMid slice");
-    
-    // Create background rectangle
-    const bgRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-    bgRect.setAttribute("width", "100%");
-    bgRect.setAttribute("height", "100%");
-    
-    // Set different colors based on product type
-    let bgColor, textColor, iconText;
-    if (product instanceof Electronics) {
-        bgColor = "#3498db";
-        textColor = "#ffffff";
-        iconText = "📱";
-    } else if (product instanceof Clothing) {
-        bgColor = "#2ecc71";
-        textColor = "#ffffff";
-        iconText = "👕";
-    } else if (product instanceof Book) {
-        bgColor = "#e74c3c";
-        textColor = "#ffffff";
-        iconText = "📚";
-    } else {
-        bgColor = "#95a5a6";
-        textColor = "#ffffff";
-        iconText = "📦";
-    }
-    
-    bgRect.setAttribute("fill", bgColor);
-    
-    // Create text element
-    const textEl = document.createElementNS("http://www.w3.org/2000/svg", "text");
-    textEl.setAttribute("x", "50%");
-    textEl.setAttribute("y", "50%");
-    textEl.setAttribute("text-anchor", "middle");
-    textEl.setAttribute("dominant-baseline", "middle");
-    textEl.setAttribute("font-family", "Arial, sans-serif");
-    textEl.setAttribute("font-size", "40");
-    textEl.setAttribute("fill", textColor);
-    textEl.textContent = iconText;
-    
-    // Create product name text
-    const nameText = document.createElementNS("http://www.w3.org/2000/svg", "text");
-    nameText.setAttribute("x", "50%");
-    nameText.setAttribute("y", "75%");
-    nameText.setAttribute("text-anchor", "middle");
-    nameText.setAttribute("dominant-baseline", "middle");
-    nameText.setAttribute("font-family", "Arial, sans-serif");
-    nameText.setAttribute("font-size", "16");
-    nameText.setAttribute("fill", textColor);
-    nameText.textContent = product.name;
-    
-    svgEl.appendChild(bgRect);
-    svgEl.appendChild(textEl);
-    svgEl.appendChild(nameText);
-    imageDiv.appendChild(svgEl);
-
-    // Product info
-    const infoDiv = document.createElement('div');
-    infoDiv.className = 'product-info';
-
-    const nameEl = document.createElement('h3');
-    nameEl.textContent = product.name;
-
-    const priceEl = document.createElement('div');
-    priceEl.className = 'product-price';
-    priceEl.textContent = `$${product.price.toFixed(2)}`;
-
-    const descEl = document.createElement('div');
-    descEl.className = 'product-description';
-    descEl.textContent = product.description;
-
-    const detailsEl = document.createElement('div');
-    detailsEl.className = 'product-details';
-    
-    // Show different details based on product type
-    if (product instanceof Electronics) {
-        detailsEl.textContent = product.getTechSpecs();
-    } else if (product instanceof Clothing) {
-        detailsEl.textContent = product.getSizeInfo();
-    } else if (product instanceof Book) {
-        detailsEl.textContent = product.getBookInfo();
-    } else {
-        detailsEl.textContent = 'Standard product';
-    }
-
-    // Append info elements
-    infoDiv.appendChild(nameEl);
-    infoDiv.appendChild(priceEl);
-    infoDiv.appendChild(descEl);
-    infoDiv.appendChild(detailsEl);
-
-    // Product actions
-    const actionsDiv = document.createElement('div');
-    actionsDiv.className = 'product-actions';
-
-    const cartBtn = document.createElement('button');
-    cartBtn.className = 'add-to-cart';
-    cartBtn.textContent = 'Add to Cart';
-    cartBtn.addEventListener('click', () => {
-        alert(`Added ${product.name} to cart!`);
-    });
-
-    const detailsBtn = document.createElement('button');
-    detailsBtn.className = 'view-details';
-    detailsBtn.textContent = 'View Details';
-    detailsBtn.addEventListener('click', () => {
-        alert(`Product Details:\n${product.display()}`);
-    });
-
-    actionsDiv.appendChild(cartBtn);
-    actionsDiv.appendChild(detailsBtn);
-
-    // Assemble the product card
-    productDiv.appendChild(imageDiv);
-    productDiv.appendChild(infoDiv);
-    productDiv.appendChild(actionsDiv);
-
-    return productDiv;
-}
-
-// Function to set up theme switching
-function setupThemeSwitching() {
-    const lightThemeBtn = document.getElementById('lightTheme');
-    const darkThemeBtn = document.getElementById('darkTheme');
-
-    lightThemeBtn.addEventListener('click', () => {
-        document.body.setAttribute('data-theme', 'light');
-    });
-
-    darkThemeBtn.addEventListener('click', () => {
-        document.body.setAttribute('data-theme', 'dark');
-    });
-}
